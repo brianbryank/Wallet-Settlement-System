@@ -560,7 +560,7 @@ GET /reconciliation/sample-report?date=2024-01-15&count=10
 
 ---
 
-## 🧪 Testing
+##  Testing
 
 ### Running Tests
 
@@ -608,7 +608,6 @@ A complete Postman collection is included in the repository:
 3. Select `wallet-service-postman-collection.json`
 4. Set environment variables (baseUrl, customerId, walletId)
 
-## 🐳 Docker Deployment
 
 ### Development Environment
 ```bash
@@ -633,7 +632,7 @@ docker-compose logs -f wallet-service
 - **prometheus**: Metrics collection (Port 9090)
 - **grafana**: Monitoring dashboard (Port 3000)
 
-## 🏗 Architecture
+##  Architecture
 
 ### System Architecture
 ```
@@ -655,7 +654,7 @@ docker-compose logs -f wallet-service
 - **Message Layer**: Asynchronous processing with RabbitMQ
 - **Security Layer**: Input validation and error handling
 
-## 🗄 Database Schema
+##  Database Schema
 
 ### Core Tables
 
@@ -746,7 +745,7 @@ CREATE TABLE reconciliation_reports (
 );
 ```
 
-## ⚡ Performance Features
+##  Performance Features
 
 ### Optimizations
 - **Connection Pooling**: HikariCP with optimized settings
@@ -948,7 +947,7 @@ wallet-service/
 
 ---
 
-## 📞 Support & Contact
+##  Support & Contact
 
 For questions, issues, or contributions, please:
 
