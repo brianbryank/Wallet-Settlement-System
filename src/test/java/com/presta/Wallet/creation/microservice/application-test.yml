@@ -1,0 +1,50 @@
+// application-test.yml
+server:
+  port: 0 # Random port for tests
+
+spring:
+  application:
+    name: wallet-service-test
+    
+  # H2 Test Database
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+    
+  h2:
+    console:
+      enabled: true
+      
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: false
+    defer-datasource-initialization: false
+    
+  # Disable RabbitMQ for tests
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    
+# Logging for tests
+logging:
+  level:
+    com.wallet: INFO
+    org.springframework.web: WARN
+    org.hibernate: WARN
+    org.springframework.amqp: WARN
+    org.springframework.security: WARN
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# Test-specific wallet configuration
+wallet:
+  services:
