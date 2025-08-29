@@ -11,7 +11,7 @@ A Spring Boot microservice for managing customer wallets, processing transaction
 
 A comprehensive microservice built with Java Spring Boot that provides wallet management, transaction processing, and reconciliation capabilities for third-party service consumption (CRB, KYC, Credit Scoring).
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Overview](#overview)
 - [Features](#features)
@@ -26,7 +26,7 @@ A comprehensive microservice built with Java Spring Boot that provides wallet ma
 - [Project Structure](#project-structure)
 - [Contributing](#contributing)
 
-## 🎯 Overview
+## Overview
 
 This microservice implements a complete wallet and settlement system that allows:
 
@@ -38,7 +38,7 @@ This microservice implements a complete wallet and settlement system that allows
 - **File Processing**: Support for CSV/JSON external report uploads and processing
 - **Comprehensive Reporting**: Export reconciliation reports and transaction summaries
 
-## ✨ Features
+## Features
 
 ### Core Features
 - ✅ **Customer & Wallet Management** - Full CRUD operations
@@ -69,7 +69,7 @@ This microservice implements a complete wallet and settlement system that allows
 | **Testing** | JUnit 5 | - | Unit & integration testing |
 | **Containerization** | Docker | - | Application packaging |
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Java 17 or higher
@@ -180,7 +180,7 @@ open http://localhost:9191/api/v1/h2-console
 # Username: sa, Password: (empty)
 ```
 
-## 📚 API Documentation
+## API Documentation
 
 ### Base URL
 ```
@@ -192,7 +192,7 @@ Currently, the API does not require authentication (suitable for internal micros
 
 ---
 
-## 🏥 Health & Monitoring
+## Health & Monitoring
 
 ### Health Check
 ```http
@@ -215,7 +215,7 @@ GET http://localhost:9191/api/v1/health
 
 ---
 
-## 👥 Customer Management
+## Customer Management
 
 ### Create Customer
 ```http://localhost:9191/api/v1/customers
@@ -263,7 +263,7 @@ GET /customers/email/{email}
 
 ---
 
-## 💰 Wallet Management
+## Wallet Management
 
 ### Create Wallet
 ```http
@@ -326,7 +326,7 @@ GET /wallets
 
 ---
 
-## 💳 Transaction Operations
+##  Transaction Operations
 
 ### Top-up Wallet
 ```http
@@ -451,7 +451,7 @@ GET /wallets/services
 
 ---
 
-## 📊 Reconciliation System
+## Reconciliation System
 
 ### Upload External Report
 ```http
@@ -766,7 +766,7 @@ CREATE TABLE reconciliation_reports (
 - **Logging**: Structured logging with correlation IDs
 - **Tracing**: Request tracing for debugging and monitoring
 
-## 📊 Business Logic
+## Business Logic
 
 ### Transaction Processing
 1. **Idempotency**: Duplicate reference ID prevention
@@ -787,7 +787,7 @@ CREATE TABLE reconciliation_reports (
 3. **Missing Internal**: External transaction with no internal match
 4. **Missing External**: Internal transaction with no external match
 
-## ⚠️ Assumptions & Limitations
+##  Assumptions & Limitations
 
 ### Assumptions Made
 
@@ -861,7 +861,7 @@ CREATE TABLE reconciliation_reports (
    - Webhook support for external notifications
    - Event sourcing pattern implementation
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 wallet-service/
@@ -924,7 +924,7 @@ wallet-service/
 └── README.md
 ```
 
-## 🤝 Contributing
+##  Contributing
 
 ### Development Setup
 
@@ -964,13 +964,13 @@ For questions, issues, or contributions, please:
 
 ---
 
-## 📄 License
+## License
 
 This project is developed as an evaluation project and is intended for demonstration purposes.
 
 ---
 
-## 🎉 Acknowledgments
+## Acknowledgments
 
 - Built with Spring Boot framework
 - Uses PostgreSQL for reliable data storage
@@ -980,4 +980,4 @@ This project is developed as an evaluation project and is intended for demonstra
 
 ---
 
-**🚀 This wallet and settlement microservice demonstrates enterprise-grade Java development with modern Spring Boot practices, comprehensive testing, and production-ready deployment capabilities.**
+** This wallet and settlement microservice demonstrates enterprise-grade Java development with modern Spring Boot practices, comprehensive testing, and production-ready deployment capabilities.**
