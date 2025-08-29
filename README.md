@@ -3,11 +3,6 @@
 A Spring Boot microservice for managing customer wallets, processing transactions, and performing daily reconciliation with external reports.
 # Author, *Brian kiplangat
 
-[![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://www.oracle.com/java/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.0-green.svg)](https://spring.io/projects/spring-boot)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue.svg)](https://www.postgresql.org/)
-[![RabbitMQ](https://img.shields.io/badge/RabbitMQ-3.12-orange.svg)](https://www.rabbitmq.com/)
-[![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://www.docker.com/)
 
 A comprehensive microservice built with Java Spring Boot that provides wallet management, transaction processing, and reconciliation capabilities for third-party service consumption (CRB, KYC, Credit Scoring).
 
@@ -41,22 +36,22 @@ This microservice implements a complete wallet and settlement system that allows
 ## Features
 
 ### Core Features
-- ✅ **Customer & Wallet Management** - Full CRUD operations
-- ✅ **Balance Top-up** - Multiple payment source support
-- ✅ **Service Consumption** - Integrated CRB, KYC, and Credit Scoring services
-- ✅ **Transaction Ledger** - Complete audit trail for all operations
-- ✅ **Concurrency Control** - Optimistic locking to prevent double deductions
-- ✅ **Idempotency** - Duplicate transaction protection using reference IDs
+-  **Customer & Wallet Management** - Full CRUD operations
+-  **Balance Top-up** - Multiple payment source support
+-  **Service Consumption** - Integrated CRB, KYC, and Credit Scoring services
+-  **Transaction Ledger** - Complete audit trail for all operations
+-  **Concurrency Control** - Optimistic locking to prevent double deductions
+-  **Idempotency** - Duplicate transaction protection using reference IDs
 
 ### Advanced Features
-- ✅ **RabbitMQ Integration** - Asynchronous transaction processing
-- ✅ **Reconciliation Engine** - 4-phase intelligent matching algorithm
-- ✅ **File Processing** - CSV/JSON external report handling
-- ✅ **Export Capabilities** - Professional CSV report generation
-- ✅ **Comprehensive Monitoring** - Health checks and metrics endpoints
-- ✅ **Docker Support** - Full containerization with production-ready setup
+-  **RabbitMQ Integration** - Asynchronous transaction processing
+-  **Reconciliation Engine** - 4-phase intelligent matching algorithm
+-  **File Processing** - CSV/JSON external report handling
+-  **Export Capabilities** - Professional CSV report generation
+-  **Comprehensive Monitoring** - Health checks and metrics endpoints
+-  **Docker Support** - Full containerization with production-ready setup
 
-## 🛠 Technology Stack
+## Technology Stack
 
 | Category | Technology | Version | Purpose |
 |----------|------------|---------|---------|
@@ -99,7 +94,7 @@ cd wallet-service
 curl http://localhost:9191/api/v1/health
 ```
 
-## 🔧 Setup Instructions
+##  Setup Instructions
 
 ### Option 1: Docker Setup (Production-Ready)
 
