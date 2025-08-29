@@ -1,159 +1,55 @@
-server:
-  port: 8080
-  servlet:
-    context-path: /api/v1
-  tomcat:
-    max-threads: 200
-    min-spare-threads: 10
+version: '3.9'
 
-spring:
-  application:
-    name: wallet-service
-  
-  # PostgreSQL Database Configuration
-  datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/walletdb}
-    username: ${SPRING_DATASOURCE_USERNAME:wallet_user}
-    password: ${SPRING_DATASOURCE_PASSWORD:wallet_secure_pass}
-    driver-class-name: org.postgresql.Driver
-    hikari:
-      maximum-pool-size: 20
-      minimum-idle: 5
-      idle-timeout: 300000
-      max-lifetime: 1200000
-      connection-timeout: 20000
-      
-  # JPA Configuration
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: false
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: false
-        jdbc:
-          batch_size: 25
-          order_inserts: true
-          order_updates: true
-        cache:
-          use_second_level_cache: false
-    defer-datasource-initialization: false
-    
-  # RabbitMQ Configuration
+services:
+  db:
+    image: postgres:16
+    container_name: wallet_db
+    environment:
+      POSTGRES_DB: walletdb
+      POSTGRES_USER: wallet
+      POSTGRES_PASSWORD: walletpass
+    ports:
+      - "15432:5432"
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    networks:
+      - walletnet
+
   rabbitmq:
-    host: ${SPRING_RABBITMQ_HOST:rabbitmq}
-    port: ${SPRING_RABBITMQ_PORT:5672}
-    username: ${SPRING_RABBITMQ_USERNAME:wallet_user}
-    password: ${SPRING_RABBITMQ_PASSWORD:wallet_secure_pass}
-    virtual-host: ${SPRING_RABBITMQ_VIRTUAL_HOST:wallet_vhost}
-    connection-timeout: 60000
-    publisher-confirm-type: correlated
-    publisher-returns: true
-    template:
-      mandatory: true
-      receive-timeout: 60000
-      reply-timeout: 60000
+    image: rabbitmq:3-management
+    container_name: wallet_rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: wallet
+      RABBITMQ_DEFAULT_PASS: walletpass
+    ports:
+      - "15672:15672"     # AMQP
+      - "5673:5672"   # Management UI
+    networks:
+      - walletnet
 
-# Management and monitoring configuration
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics,prometheus,env
-      base-path: /actuator
-  endpoint:
-    health:
-      show-details: always
-      show-components: always
-    metrics:
-      enabled: true
-    prometheus:
-      enabled: true
-  metrics:
-    export:
-      prometheus:
-        enabled: true
-    distribution:
-      percentiles-histogram:
-        http.server.requests: true
-      slo:
-        http.server.requests: 50ms,100ms,200ms,300ms,500ms,1s,2s,5s
+  app:
+    build: .
+    container_name: wallet_app
+    depends_on:
+      - db
+      - rabbitmq
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/walletdb
+      SPRING_DATASOURCE_USERNAME: wallet
+      SPRING_DATASOURCE_PASSWORD: walletpass
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: wallet
+      SPRING_RABBITMQ_PASSWORD: walletpass
+    ports:
+      - "9191:9191"
+    networks:
+      - walletnet
 
+volumes:
+  dbdata:
 
-logging:
-  level:
-    com.wallet: ${LOGGING_LEVEL_COM_WALLET:INFO}
-    org.springframework.web: ${LOGGING_LEVEL_SPRING_WEB:INFO}
-    org.springframework.amqp: INFO
-    org.springframework.security: INFO
-    org.hibernate.SQL: WARN
-    org.hibernate.type.descriptor.sql.BasicBinder: WARN
-    root: ${LOGGING_LEVEL_ROOT:WARN}
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
-    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
-  file:
-    name: /app/logs/wallet-service.log
-  logback:
-    rollingpolicy:
-      max-file-size: 100MB
-      max-history: 30
-      total-size-cap: 3GB
-
-wallet:
-  services:
-    crb:
-      cost: ${WALLET_SERVICES_CRB_COST:50.00}
-      enabled: true
-      timeout: 30000
-    kyc:
-      cost: ${WALLET_SERVICES_KYC_COST:25.00}
-      enabled: true
-      timeout: 30000
-    credit-scoring:
-      cost: ${WALLET_SERVICES_CREDIT_SCORING_COST:75.00}
-      enabled: true
-      timeout: 60000
-  queue:
-    transaction-queue: wallet.transactions
-    dlq-queue: wallet.transactions.dlq
-    exchange: wallet.exchange
-    routing-key: transaction.routing.key
-  reconciliation:
-    batch-size: 1000
-    max-file-size: 50MB
-    supported-formats: csv,json
-    auto-process: false
-  security:
-    cors:
-      allowed-origins: "*"
-      allowed-methods: GET,POST,PUT,DELETE,OPTIONS
-      allowed-headers: "*"
-      max-age: 3600
-
-spring:
-  servlet:
-    multipart:
-      max-file-size: ${MAX_FILE_SIZE:50MB}
-      max-request-size: ${MAX_REQUEST_SIZE:50MB}
-      file-size-threshold: 2KB
-
-security:
-  basic:
-    enabled: false
-  headers:
-    frame: false
-    content-type: false
-    xss: false
-
-# Cache configuration
-spring:
-  cache:
-    type: simple
-    cache-names:
-      - customers
-      - wallets
-      - reconciliation-reports
-    caffeine:
-      spec: maximumSize=1000,expireAfterWrite=30m
+networks:
+  walletnet:
+    driver: bridge

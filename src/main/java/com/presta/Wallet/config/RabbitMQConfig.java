@@ -1,6 +1,5 @@
 package com.presta.Wallet.config;
 
-
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -16,45 +15,63 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig {
 
     @Value("${wallet.queue.transaction-queue}")
-    private String transactionQueue;
+    private String transactionQueueName;
 
     @Value("${wallet.queue.dlq-queue}")
-    private String dlqQueue;
+    private String dlqQueueName;
 
+    @Value("${wallet.exchange.name:wallet.exchange}")
+    private String exchangeName;
+
+    @Value("${wallet.routing.key:transaction.routing.key}")
+    private String transactionRoutingKey;
+
+    // Transaction Queue with DLQ binding
     @Bean
     public Queue transactionQueue() {
-        return QueueBuilder.durable(transactionQueue)
+        return QueueBuilder.durable(transactionQueueName)
                 .withArgument("x-dead-letter-exchange", "")
-                .withArgument("x-dead-letter-routing-key", dlqQueue)
+                .withArgument("x-dead-letter-routing-key", dlqQueueName)
                 .build();
     }
 
+    // Dead Letter Queue
     @Bean
     public Queue deadLetterQueue() {
-        return QueueBuilder.durable(dlqQueue).build();
+        return QueueBuilder.durable(dlqQueueName).build();
     }
 
-
+    // Direct Exchange
     @Bean
     public DirectExchange exchange() {
-        return new DirectExchange("wallet.exchange");
+        return new DirectExchange(exchangeName);
     }
 
-    // here is Binding
+    // Binding transactionQueue -> exchange with routing key
     @Bean
-    public Binding binding() {
-        return BindingBuilder.bind(transactionQueue())
+    public Binding transactionBinding() {
+        return BindingBuilder
+                .bind(transactionQueue())
                 .to(exchange())
-                .with("transaction.routing.key");
+                .with(transactionRoutingKey);
     }
 
-    //here is message Converter
+    // Binding DLQ to default exchange
+    @Bean
+    public Binding deadLetterBinding() {
+        return BindingBuilder
+                .bind(deadLetterQueue())
+                .to(new DirectExchange("")) // default exchange
+                .with(dlqQueueName);
+    }
+
+    // Message converter
     @Bean
     public MessageConverter jsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
     }
 
-    // am coding RabbitTemplate
+    // RabbitTemplate for publishing
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
@@ -62,4 +79,3 @@ public class RabbitMQConfig {
         return rabbitTemplate;
     }
 }
-

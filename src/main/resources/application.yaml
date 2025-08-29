@@ -1,65 +1,12 @@
 server:
-  port: 8080
+  port: 9191
   servlet:
     context-path: /api/v1
 
 spring:
   application:
     name: wallet-service
-  
-  # H2 Database Configuration
-  datasource:
-    url: jdbc:h2:file:./data/walletdb;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: password
-    
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-      settings:
-        web-allow-others: true
-        
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
-        format_sql: true
-    defer-datasource-initialization: false
-    
-  # RabbitMQ Configuration (Embedded for simplicity)
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
-    virtual-host: /
 
-# Management and monitoring configuration (SINGLE SECTION)
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics,rabbitmq
-  endpoint:
-    health:
-      show-details: always
-
-# Logging configuration (SINGLE SECTION)
-logging:
-  level:
-    com.wallet: DEBUG
-    org.springframework.web: INFO
-    org.springframework.amqp: INFO
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
-    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
-
-# Application specific configuration
 wallet:
   services:
     crb:
@@ -74,66 +21,118 @@ wallet:
   queue:
     transaction-queue: wallet.transactions
     dlq-queue: wallet.transactions.dlq
-    
----
-spring:
-  config:
-    activate:
-      on-profile: test
-      
-  datasource:
-    url: jdbc:h2:mem:testdb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-    
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    show-sql: true
-    
-  h2:
-    console:
-      enabled: true
+    enabled: true
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,rabbitmq
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.wallet: DEBUG
+    org.springframework.web: INFO
+    org.springframework.amqp: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# ---------------------------
+# DEV PROFILE
+# ---------------------------
 ---
 spring:
   config:
     activate:
       on-profile: dev
-      
+
   datasource:
-    url: jdbc:h2:mem:devdb
+    url: jdbc:h2:mem:walletdb
     driver-class-name: org.h2.Driver
     username: sa
     password: password
-    
+
   jpa:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
-      
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+
   h2:
     console:
       enabled: true
+      path: /h2-console
 
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: wallet
+    password: walletpass
+    virtual-host: /
+    template:
+      enabled: false
+
+# ---------------------------
+# TEST PROFILE
+# ---------------------------
 ---
 spring:
   config:
     activate:
-      on-profile: file
-      
+      on-profile: test
+
   datasource:
-    url: jdbc:h2:file:./data/walletdb-persistent;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
     username: sa
-    password: password
-    
+    password: ""
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: wallet
+    password: walletpass
+    virtual-host: /
+    template:
+      enabled: false
+
+# ---------------------------
+# PROD PROFILE
+# ---------------------------
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    url: jdbc:postgresql://db:5432/walletdb
+    username: wallet
+    password: walletpass
+    driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
-      
-  h2:
-    console:
-      enabled: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: wallet
+    password: walletpass
+    virtual-host: /
