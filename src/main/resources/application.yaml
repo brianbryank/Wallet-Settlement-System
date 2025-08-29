@@ -1,0 +1,139 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1
+
+spring:
+  application:
+    name: wallet-service
+  
+  # H2 Database Configuration
+  datasource:
+    url: jdbc:h2:file:./data/walletdb;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+    
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+        
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+    defer-datasource-initialization: false
+    
+  # RabbitMQ Configuration (Embedded for simplicity)
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+
+# Management and monitoring configuration (SINGLE SECTION)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,rabbitmq
+  endpoint:
+    health:
+      show-details: always
+
+# Logging configuration (SINGLE SECTION)
+logging:
+  level:
+    com.wallet: DEBUG
+    org.springframework.web: INFO
+    org.springframework.amqp: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Application specific configuration
+wallet:
+  services:
+    crb:
+      cost: 50.00
+      enabled: true
+    kyc:
+      cost: 25.00
+      enabled: true
+    credit-scoring:
+      cost: 75.00
+      enabled: true
+  queue:
+    transaction-queue: wallet.transactions
+    dlq-queue: wallet.transactions.dlq
+    
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+      
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+    
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    
+  h2:
+    console:
+      enabled: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+      
+  datasource:
+    url: jdbc:h2:mem:devdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+    
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+      
+  h2:
+    console:
+      enabled: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: file
+      
+  datasource:
+    url: jdbc:h2:file:./data/walletdb-persistent;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+    
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+      
+  h2:
+    console:
+      enabled: true
