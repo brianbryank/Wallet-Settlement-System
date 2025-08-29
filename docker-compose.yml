@@ -22,8 +22,8 @@ services:
       RABBITMQ_DEFAULT_USER: wallet
       RABBITMQ_DEFAULT_PASS: walletpass
     ports:
-      - "15672:15672"     # AMQP
-      - "5673:5672"   # Management UI
+      - "15672:15672"     # Management ui
+      - "5673:5672"   #AMQP
     networks:
       - walletnet
 
